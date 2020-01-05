@@ -1,7 +1,11 @@
 class Player
-  attr_reader :marker
+  attr_reader :color
   
-  def initialize(marker)
-    @marker = marker
+  def initialize(color)
+    @color = color
+  end
+
+  def to_s
+    color
   end
 end

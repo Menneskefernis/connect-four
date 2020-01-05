@@ -6,15 +6,25 @@ class Board
   end
 
   def create_board
-    board = Array.new(7) { Array.new(6, "| - ") }
+    board = Array.new(7) { Array.new(6, "| \u{2610} ") }
   end
   
   def insert_disc(disc, column)
-    state[column][0] = disc
+    row = 0
+    
+    loop do
+      unless state[column][row].is_a? Disc
+        disc.column = column
+        disc.row = row
+        state[column][row] = disc
+        break
+      end
+      row += 1
+    end
+    [column, row] #maybe delete
   end
 
   def draw
-    
     puts ""
     (state[0].size - 1).downto(0) do |i|
       #10.times { print " " }
@@ -25,11 +35,73 @@ class Board
     end
     29.times { print "-" }
     puts ""
-    state.each_with_index { |column, i| print "| #{i} " }
+    state.each_with_index { |column, i| print "| #{i + 1} " }
     print "|"
     2.times { puts "" }
   end
+
+  def four_in_row?(disc)
+    return true if horizontal_match?(disc)
+    return true if vertical_match?(disc)
+    return true if diagonal_up_match?(disc)
+    false
+  end
+
+  def diagonal_up_match?(disc)
+    current = nil
+    if disc.column - disc.row < 0
+      current = state[0][(disc.column - disc.row).abs]
+    else
+      current = state[disc.column - disc.row][0]
+    end
+    #Add tile classes with columns and rows
+    counter = 0
+    row = 0
+    column = current.column
+
+    until row >= state[0].size
+      if current.is_a? Disc
+        current.color == disc.color ? counter += 1 : counter = 0
+      else
+        counter = 0
+      end
+      break if state[column + 1].nil?
+      current = state[column + 1][row + 1] if state[column + 1][row + 1]
+      row += 1
+      column += 1
+    end
+    return true if counter >= 4
+    false
+  end
+
+  def vertical_match?(disc)
+    counter = 0
+
+    state[disc.column].each do |row|
+      if row.is_a? Disc
+        row.color == disc.color ? counter += 1 : counter = 0
+      end
+      return true if counter >= 4
+    end
+    false
+  end
+
+  def horizontal_match?(disc)
+    counter = 0
+
+    state.each do |column|
+      if column[disc.row].is_a? Disc
+        column[disc.row].color == disc.color ? counter += 1 : counter = 0
+        return true if counter >= 4
+      else
+        counter = 0
+      end
+    end
+    false
+  end
+
+  def column_full?(column)
+    return true if state[column].all? { |spot| spot.is_a? Disc }
+    false
+  end
 end
-  
-#board = Board.new
-#board.draw
