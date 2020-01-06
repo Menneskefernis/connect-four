@@ -68,32 +68,32 @@ end
 
 
 
-game_board = Board.new
-        
-disc1_0 = Disc.new("O")
-disc2_0 = Disc.new("X") 
-disc1_1 = Disc.new("O")
-disc2_1 = Disc.new("X")
-disc3_0 = Disc.new("X")
-disc1_2 = Disc.new("O")
-disc4_0 = Disc.new("X")
-disc3_1 = Disc.new("X")
-disc2_2 = Disc.new("X")
-disc1_3 = Disc.new("O")
+#game_board = Board.new
+#        
+#disc1_0 = Disc.new("O")
+#disc2_0 = Disc.new("X") 
+#disc1_1 = Disc.new("O")
+#disc2_1 = Disc.new("X")
+#disc3_0 = Disc.new("X")
+#disc1_2 = Disc.new("O")
+#disc4_0 = Disc.new("X")
+#disc3_1 = Disc.new("X")
+#disc2_2 = Disc.new("X")
+#disc1_3 = Disc.new("O")
+#
+##game_board.insert_disc(disc1_0, 3)
+#game_board.insert_disc(disc2_0, 1)
+#game_board.insert_disc(disc1_1, 1)
+#game_board.insert_disc(disc2_1, 1)
+#game_board.insert_disc(disc3_0, 1)
+#game_board.insert_disc(disc1_2, 1)
+#game_board.insert_disc(disc4_0, 1)
+#game_board.insert_disc(disc3_1, 6)
+#game_board.insert_disc(disc2_2, 6)
+#game_board.insert_disc(disc1_3, 6)
+#
+#puts game_board.diagonal_down_match?(disc3_1)
+#game_board.draw
 
-#game_board.insert_disc(disc1_0, 3)
-game_board.insert_disc(disc2_0, 2)
-game_board.insert_disc(disc1_1, 4)
-game_board.insert_disc(disc2_1, 5)
-game_board.insert_disc(disc3_0, 5)
-game_board.insert_disc(disc1_2, 5)
-game_board.insert_disc(disc4_0, 6)
-game_board.insert_disc(disc3_1, 6)
-game_board.insert_disc(disc2_2, 6)
-game_board.insert_disc(disc1_3, 6)
-
-puts game_board.diagonal_up_match?(disc1_3)
-game_board.draw
-
-#game = Game.new
-#game.start
+game = Game.new
+game.start

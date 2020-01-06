@@ -43,34 +43,74 @@ class Board
   def four_in_row?(disc)
     return true if horizontal_match?(disc)
     return true if vertical_match?(disc)
+    return true if diagonal_down_match?(disc)
     return true if diagonal_up_match?(disc)
     false
   end
 
-  def diagonal_up_match?(disc)
-    current = nil
-    if disc.column - disc.row < 0
-      current = state[0][(disc.column - disc.row).abs]
-    else
-      current = state[disc.column - disc.row][0]
-    end
-    #Add tile classes with columns and rows
-    counter = 0
-    row = 0
-    column = current.column
+  def diagonal_down_match?(disc)
+    current = disc
+    
+    column = disc.column
+    row = disc.row
 
-    until row >= state[0].size
+    while column > 0 && row < state[0].size - 1
+      current = state[column - 1][row + 1]
+
+      column -= 1
+      row += 1
+    end
+
+    counter = 0
+
+    loop do
       if current.is_a? Disc
         current.color == disc.color ? counter += 1 : counter = 0
       else
-        counter = 0
+        current = 0
       end
-      break if state[column + 1].nil?
-      current = state[column + 1][row + 1] if state[column + 1][row + 1]
-      row += 1
+
+      return true if counter >= 4
+      break if column == state.size - 1
+      break if row == 0
+
+      current = state[column + 1][row - 1]
       column += 1
+      row -= 1
     end
-    return true if counter >= 4
+    false
+  end
+
+  def diagonal_up_match?(disc)
+    current = disc
+    
+    column = disc.column
+    row = disc.row
+
+    while column > 0 && row > 0
+      current = state[column - 1][row - 1]
+
+      column -= 1
+      row -= 1
+    end
+
+    counter = 0
+
+    loop do
+      if current.is_a? Disc
+        current.color == disc.color ? counter += 1 : counter = 0
+      else
+        current = 0
+      end
+
+      return true if counter >= 4
+      break if column == state.size - 1
+      break if row == state[0].size
+
+      current = state[column + 1][row + 1]
+      column += 1
+      row += 1
+    end
     false
   end
 
@@ -105,3 +145,30 @@ class Board
     false
   end
 end
+
+
+
+#current = nil
+#if disc.column - disc.row < 0
+#  current = state[0][(disc.column - disc.row).abs]
+#else
+#  current = state[disc.column - disc.row][0]
+#end
+##Add tile classes with columns and rows
+#counter = 0
+#row = 0
+#column = current.column
+#
+#until row >= state[0].size
+#  if current.is_a? Disc
+#    current.color == disc.color ? counter += 1 : counter = 0
+#  else
+#    counter = 0
+#  end
+#  break if state[column + 1].nil?
+#  current = state[column + 1][row + 1] if state[column + 1][row + 1]
+#  row += 1
+#  column += 1
+#end
+#return true if counter >= 4
+#false
