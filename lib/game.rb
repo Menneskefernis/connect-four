@@ -6,11 +6,11 @@ require_relative 'disc'
 class Game
   attr_accessor :player1, :player2, :board #should be made reader
   attr_accessor :current_player, :game_end
-  #\u{26AB}
+  
   def initialize
     @board = Board.new
-    @player1 = Player.new("X".red)
-    @player2 = Player.new("O".green)
+    @player1 = Player.new("\u{26AB}".red)
+    @player2 = Player.new("\u{26AB}".green)
     @current_player = player1
     @game_end = false
   end
@@ -35,7 +35,7 @@ class Game
     
     new_disc = Disc.new(current_player.color)
     board.insert_disc(new_disc, choice - 1)
-    self.game_end = true if board.four_in_row?(new_disc)
+    end_game if board.four_in_row?(new_disc)
     
     switch_player
   end
@@ -64,12 +64,20 @@ class Game
       self.current_player = player1
     end
   end
+
+  def end_game
+    board.draw
+    player = current_player == player1 ? "Red" : "Green"
+    puts "#{player}".upcase + " #{current_player}" + "won the game!\n\n".upcase
+    self.game_end = true
+  end
 end
 
 
 
 #game_board = Board.new
-#        
+#game_board.state[6].each { |elem| puts elem }
+
 #disc1_0 = Disc.new("O")
 #disc2_0 = Disc.new("X") 
 #disc1_1 = Disc.new("O")

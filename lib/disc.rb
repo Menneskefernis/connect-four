@@ -9,6 +9,6 @@ class Disc
   end
 
   def to_s
-    "| #{color} "
+    "| #{color}"
   end
 end

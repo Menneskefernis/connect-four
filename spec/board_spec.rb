@@ -14,6 +14,14 @@ describe Board do
     end
   end
 
+  describe "#add_empty_slots" do
+    game_board = Board.new
+
+    it "adds empty slots to the board" do
+      expect(game_board.state[0][0]).should be_kind_of(EmptySlot)
+    end
+  end
+
   describe "#insert_disc" do
     game_board = Board.new
     game_board.create_board

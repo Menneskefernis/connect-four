@@ -1,3 +1,5 @@
+require_relative 'empty_slot'
+
 class Board
   attr_accessor :state
 
@@ -6,9 +8,18 @@ class Board
   end
 
   def create_board
-    board = Array.new(7) { Array.new(6, "| \u{2610} ") }
+    board = Array.new(7) { Array.new(6) }
+    add_empty_slots(board)
   end
   
+  def add_empty_slots(array)
+    array.map.each_with_index do |column, i|
+      column.map.each_with_index do |row, j|
+        row = EmptySlot.new(i, j)
+      end
+    end
+  end
+
   def insert_disc(disc, column)
     row = 0
     
@@ -21,13 +32,11 @@ class Board
       end
       row += 1
     end
-    [column, row] #maybe delete
   end
 
   def draw
     puts ""
     (state[0].size - 1).downto(0) do |i|
-      #10.times { print " " }
       state.each do |column|
         print column[i]
       end
@@ -51,14 +60,9 @@ class Board
   def diagonal_down_match?(disc)
     current = disc
     
-    column = disc.column
-    row = disc.row
-
-    while column > 0 && row < state[0].size - 1
-      current = state[column - 1][row + 1]
-
-      column -= 1
-      row += 1
+    #rewind to first slot in diagonal row
+    while current.column > 0 && current.row < state[0].size - 1
+      current = state[current.column - 1][current.row + 1]
     end
 
     counter = 0
@@ -67,16 +71,12 @@ class Board
       if current.is_a? Disc
         current.color == disc.color ? counter += 1 : counter = 0
       else
-        current = 0
+        counter = 0
       end
-
       return true if counter >= 4
-      break if column == state.size - 1
-      break if row == 0
-
-      current = state[column + 1][row - 1]
-      column += 1
-      row -= 1
+      break if current.column == state.size - 1
+      break if current.row == 0
+      current = state[current.column + 1][current.row - 1]
     end
     false
   end
@@ -84,14 +84,9 @@ class Board
   def diagonal_up_match?(disc)
     current = disc
     
-    column = disc.column
-    row = disc.row
-
-    while column > 0 && row > 0
-      current = state[column - 1][row - 1]
-
-      column -= 1
-      row -= 1
+    #rewind to first slot in diagonal row
+    while current.column > 0 && current.row > 0
+      current = state[current.column - 1][current.row - 1]
     end
 
     counter = 0
@@ -100,16 +95,12 @@ class Board
       if current.is_a? Disc
         current.color == disc.color ? counter += 1 : counter = 0
       else
-        current = 0
+        counter = 0
       end
-
       return true if counter >= 4
-      break if column == state.size - 1
-      break if row == state[0].size
-
-      current = state[column + 1][row + 1]
-      column += 1
-      row += 1
+      break if current.column == state.size - 1
+      break if current.row == state[0].size - 1
+      current = state[current.column + 1][current.row + 1]
     end
     false
   end
@@ -143,6 +134,10 @@ class Board
   def column_full?(column)
     return true if state[column].all? { |spot| spot.is_a? Disc }
     false
+  end
+
+  def board_full?
+
   end
 end
 
