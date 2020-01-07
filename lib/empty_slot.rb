@@ -1,5 +1,7 @@
 class EmptySlot
-  attr_accessor :column, :row
+  attr_reader :column, :row
+
+  private
   def initialize(column, row)
     @column = column
     @row = row

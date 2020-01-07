@@ -4,7 +4,8 @@ class Player
   def initialize(color)
     @color = color
   end
-
+  
+  private
   def to_s
     color
   end

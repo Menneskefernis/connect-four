@@ -14,14 +14,6 @@ describe Board do
     end
   end
 
-  describe "#add_empty_slots" do
-    game_board = Board.new
-
-    it "adds empty slots to the board" do
-      expect(game_board.state[0][0]).should be_kind_of(EmptySlot)
-    end
-  end
-
   describe "#insert_disc" do
     game_board = Board.new
     game_board.create_board
@@ -37,11 +29,6 @@ describe Board do
       game_board.insert_disc(disc2, 4)
       expect(game_board.state[4][1]).to eql(disc2)
     end
-
-    it "returns the position of the disk as coordinates" do
-      disc3 = Disc.new("O")
-      expect(game_board.insert_disc(disc3, 4)).to eql([4, 2])
-    end
   end
 
   describe "#column_full?" do
@@ -53,6 +40,15 @@ describe Board do
     end
   
     it "returns true if a column is full" do
+      game_board.state[4].map! { |row| Disc.new("O") }
+      expect(game_board.column_full?(4)).to eql(true)
+    end
+  end
+
+  describe "#full?" do
+    game_board = Board.new
+
+    it "returns false if board is not full" do
       disc1 = Disc.new("O")
       disc2 = Disc.new("O") 
       disc3 = Disc.new("O")
@@ -61,12 +57,23 @@ describe Board do
       disc6 = Disc.new("O")
 
       game_board.insert_disc(disc1, 4)
-      game_board.insert_disc(disc2, 4)
+      game_board.insert_disc(disc2, 2)
       game_board.insert_disc(disc3, 4)
-      game_board.insert_disc(disc4, 4)
-      game_board.insert_disc(disc5, 4)
+      game_board.insert_disc(disc4, 6)
+      game_board.insert_disc(disc5, 1)
       game_board.insert_disc(disc6, 4)
-      expect(game_board.column_full?(4)).to eql(true)
+
+      expect(game_board.full?).to eql(false)
+    end
+
+    it "returns true if board is full" do
+      game_board.state = game_board.state.map do |column|
+        column.map do |row|
+          row = Disc.new("X")
+        end
+      end
+
+      expect(game_board.full?).to eql(true)
     end
   end
 
@@ -142,7 +149,7 @@ describe Board do
 
     it "returns true for four in a row even if not bottom row" do
         game_board = Board.new
-        
+
         disc1 = Disc.new("O")
         disc2 = Disc.new("O") 
         disc3 = Disc.new("X")
@@ -224,47 +231,367 @@ describe Board do
   end
 
   describe "#diagonal_up_match?" do
-    it "returns true if there is a diagonal match going up from left to right" do
+    it "returns true if there is a diagonal match going up from left to right in lower left corner" do
       game_board = Board.new
   
-      disc1_0 = Disc.new("O")
-      disc2_0 = Disc.new("X") 
-      disc1_1 = Disc.new("O")
-      disc2_1 = Disc.new("X")
-      disc3_0 = Disc.new("X")
-      disc1_2 = Disc.new("O")
-      disc4_0 = Disc.new("X")
-      disc3_1 = Disc.new("X")
-      disc2_2 = Disc.new("X")
-      disc1_3 = Disc.new("O")
+      disc_base = Disc.new("X")
       
-      game_board.insert_disc(disc1_0, 1)
-      game_board.insert_disc(disc2_0, 2)
-      game_board.insert_disc(disc1_1, 2)
-      game_board.insert_disc(disc2_1, 3)
-      game_board.insert_disc(disc3_0, 3)
-      game_board.insert_disc(disc1_2, 3)
-      game_board.insert_disc(disc4_0, 4)
-      game_board.insert_disc(disc3_1, 4)
-      game_board.insert_disc(disc2_2, 4)
-      game_board.insert_disc(disc1_3, 4)
+      disc1 = Disc.new("O")
+      disc2 = Disc.new("O")
+      disc3 = Disc.new("O")
+      disc4 = Disc.new("O")
+
+      game_board.insert_disc(disc1, 0)
+      game_board.insert_disc(disc_base, 1)
+      game_board.insert_disc(disc_base, 2)
+      game_board.insert_disc(disc_base, 3)
+
+      game_board.insert_disc(disc2, 1)
+      game_board.insert_disc(disc_base, 2)
+      game_board.insert_disc(disc_base, 3)
+
+      game_board.insert_disc(disc3, 2)
+      game_board.insert_disc(disc_base, 3)
+
+      game_board.insert_disc(disc4, 3)
   
-      expect(game_board.diagonal_up_match?(disc1_1)).to eql(true)
+      expect(game_board.diagonal_up_match?(disc3)).to eql(true)
+    end
+
+    it "returns true if there is a diagonal match going up from left to right in lower right corner" do
+      game_board = Board.new
+  
+      disc_base = Disc.new("X")
+      
+      disc1 = Disc.new("O")
+      disc2 = Disc.new("O")
+      disc3 = Disc.new("O")
+      disc4 = Disc.new("O")
+
+      game_board.insert_disc(disc1, 3)
+      game_board.insert_disc(disc_base, 4)
+      game_board.insert_disc(disc_base, 5)
+      game_board.insert_disc(disc_base, 6)
+
+      game_board.insert_disc(disc2, 4)
+      game_board.insert_disc(disc_base, 5)
+      game_board.insert_disc(disc_base, 6)
+
+      game_board.insert_disc(disc3, 5)
+      game_board.insert_disc(disc_base, 6)
+
+      game_board.insert_disc(disc4, 6)
+  
+      expect(game_board.diagonal_up_match?(disc4)).to eql(true)
+    end
+
+    it "returns true if there is a diagonal match going up from left to right in upper left corner" do
+      game_board = Board.new
+
+      disc_base = Disc.new("X")
+      
+      disc1 = Disc.new("O")
+      disc2 = Disc.new("O")
+      disc3 = Disc.new("O")
+      disc4 = Disc.new("O")
+      
+      game_board.insert_disc(disc_base, 0)
+      game_board.insert_disc(disc_base, 0)
+      game_board.insert_disc(disc_base, 1)
+      game_board.insert_disc(disc_base, 1)
+      game_board.insert_disc(disc_base, 2)
+      game_board.insert_disc(disc_base, 2)
+      game_board.insert_disc(disc_base, 3)
+      game_board.insert_disc(disc_base, 3)
+
+      game_board.insert_disc(disc1, 0)
+      game_board.insert_disc(disc_base, 1)
+      game_board.insert_disc(disc_base, 2)
+      game_board.insert_disc(disc_base, 3)
+
+      game_board.insert_disc(disc2, 1)
+      game_board.insert_disc(disc_base, 2)
+      game_board.insert_disc(disc_base, 3)
+
+      game_board.insert_disc(disc3, 2)
+      game_board.insert_disc(disc_base, 3)
+
+      game_board.insert_disc(disc4, 3)
+  
+      expect(game_board.diagonal_up_match?(disc1)).to eql(true)
+    end
+
+    it "returns true if there is a diagonal match going up from left to right in upper right corner" do
+      game_board = Board.new
+
+      disc_base = Disc.new("X")
+      
+      disc1 = Disc.new("O")
+      disc2 = Disc.new("O")
+      disc3 = Disc.new("O")
+      disc4 = Disc.new("O")
+      
+      game_board.insert_disc(disc_base, 3)
+      game_board.insert_disc(disc_base, 3)
+      game_board.insert_disc(disc_base, 4)
+      game_board.insert_disc(disc_base, 4)
+      game_board.insert_disc(disc_base, 5)
+      game_board.insert_disc(disc_base, 5)
+      game_board.insert_disc(disc_base, 6)
+      game_board.insert_disc(disc_base, 6)
+
+      game_board.insert_disc(disc1, 3)
+      game_board.insert_disc(disc_base, 4)
+      game_board.insert_disc(disc_base, 5)
+      game_board.insert_disc(disc_base, 6)
+
+      game_board.insert_disc(disc2, 4)
+      game_board.insert_disc(disc_base, 5)
+      game_board.insert_disc(disc_base, 6)
+
+      game_board.insert_disc(disc3, 5)
+      game_board.insert_disc(disc_base, 6)
+
+      game_board.insert_disc(disc4, 6)
+  
+      expect(game_board.diagonal_up_match?(disc2)).to eql(true)
+    end
+
+    it "returns false if there is another color breaking a diagonal match" do
+      game_board = Board.new
+
+      disc_base = Disc.new("X")
+
+      disc1 = Disc.new("O")
+      disc2 = Disc.new("O")
+      disc3 = Disc.new("X")
+      disc4 = Disc.new("O")
+      
+      game_board.insert_disc(disc1, 0)
+      game_board.insert_disc(disc_base, 1)
+      game_board.insert_disc(disc_base, 2)
+      game_board.insert_disc(disc_base, 3)
+
+      game_board.insert_disc(disc2, 1)
+      game_board.insert_disc(disc_base, 2)
+      game_board.insert_disc(disc_base, 3)
+
+      game_board.insert_disc(disc3, 2)
+      game_board.insert_disc(disc_base, 3)
+
+      game_board.insert_disc(disc4, 3)
+  
+      expect(game_board.diagonal_up_match?(disc1)).to eql(false)
+    end
+
+    it "returns false if there is a hole in a diagonal streak" do
+      game_board = Board.new
+
+      disc_base = Disc.new("X")
+
+      disc1 = Disc.new("O")
+      disc2 = Disc.new("O") 
+      disc3 = Disc.new("O")
+      disc4 = Disc.new("O")
+      
+      game_board.insert_disc(disc1, 0)
+      game_board.insert_disc(disc_base, 1)
+      game_board.insert_disc(disc_base, 2)
+      game_board.insert_disc(disc_base, 3)
+      game_board.insert_disc(disc_base, 4)
+
+      game_board.insert_disc(disc2, 1)
+      game_board.insert_disc(disc_base, 2)
+      game_board.insert_disc(disc_base, 3)
+      game_board.insert_disc(disc_base, 4)
+      
+      game_board.insert_disc(disc_base, 3)
+      game_board.insert_disc(disc_base, 4)
+
+      game_board.insert_disc(disc3, 3)
+      game_board.insert_disc(disc_base, 4)
+
+      game_board.insert_disc(disc4, 4)
+  
+      expect(game_board.diagonal_up_match?(disc1)).to eql(false)
     end
   end
 
-  #describe "#draw" do
-  #it "draw an empty game board" do
-  #  expect { game_board.draw }.to output(<<-MESSAGE.strip_heredoc).to_stdout
-  #    | - | - | - | - | - | - | - |
-  #    | - | - | - | - | - | - | - |
-  #    | - | - | - | - | - | - | - |
-  #    | - | - | - | - | - | - | - |
-  #    | - | - | - | - | - | - | - |
-  #    | - | - | - | - | - | - | - |
-  #    -----------------------------
-  #    | 1 | 2 | 3 | 4 | 5 | 6 | 7 |
-  #  OUTPUT
-  #end
-  #end
+  describe "#diagonal_down_match?" do
+    it "returns true if there is a diagonal match going down from right to left in lower left corner" do
+      game_board = Board.new
+  
+      disc_base = Disc.new("O")
+      
+      disc1 = Disc.new("X")
+      disc2 = Disc.new("X")
+      disc3 = Disc.new("X")
+      disc4 = Disc.new("X")
+
+      game_board.insert_disc(disc_base, 0)
+      game_board.insert_disc(disc_base, 1)
+      game_board.insert_disc(disc_base, 2)
+      game_board.insert_disc(disc1, 3)
+
+      game_board.insert_disc(disc_base, 0)
+      game_board.insert_disc(disc_base, 1)
+      game_board.insert_disc(disc2, 2)
+
+      game_board.insert_disc(disc_base, 0)
+      game_board.insert_disc(disc3, 1)
+
+      game_board.insert_disc(disc4, 0)
+  
+      expect(game_board.diagonal_down_match?(disc3)).to eql(true)
+    end
+
+    it "returns true if there is a diagonal match going down from right to left in lower right corner" do
+      game_board = Board.new
+        disc_base = Disc.new("O")
+      
+      disc1 = Disc.new("X")
+      disc2 = Disc.new("X")
+      disc3 = Disc.new("X")
+      disc4 = Disc.new("X")
+
+      game_board.insert_disc(disc_base, 3)
+      game_board.insert_disc(disc_base, 4)
+      game_board.insert_disc(disc_base, 5)
+      game_board.insert_disc(disc1, 6)
+
+      game_board.insert_disc(disc_base, 3)
+      game_board.insert_disc(disc_base, 4)
+      game_board.insert_disc(disc2, 5)
+
+      game_board.insert_disc(disc_base, 3)
+      game_board.insert_disc(disc3, 4)
+
+      game_board.insert_disc(disc4, 3)
+
+      expect(game_board.diagonal_down_match?(disc4)).to eql(true)
+    end
+
+    it "returns true if there is a diagonal match going down from right to left in upper left corner" do
+      game_board = Board.new
+      disc_base = Disc.new("X")
+      
+      disc1 = Disc.new("O")
+      disc2 = Disc.new("O")
+      disc3 = Disc.new("O")
+      disc4 = Disc.new("O")
+      
+      game_board.insert_disc(disc_base, 0)
+      game_board.insert_disc(disc_base, 0)
+      game_board.insert_disc(disc_base, 1)
+      game_board.insert_disc(disc_base, 1)
+      game_board.insert_disc(disc_base, 2)
+      game_board.insert_disc(disc_base, 2)
+      game_board.insert_disc(disc_base, 3)
+      game_board.insert_disc(disc_base, 3)
+
+      game_board.insert_disc(disc_base, 0)
+      game_board.insert_disc(disc_base, 1)
+      game_board.insert_disc(disc_base, 2)
+      game_board.insert_disc(disc1, 3)
+
+      game_board.insert_disc(disc_base, 0)
+      game_board.insert_disc(disc_base, 1)
+      game_board.insert_disc(disc2, 2)
+
+      game_board.insert_disc(disc_base, 0)
+      game_board.insert_disc(disc3, 1)
+
+      game_board.insert_disc(disc4, 0)
+  
+      expect(game_board.diagonal_down_match?(disc1)).to eql(true)
+    end
+
+    it "returns true if there is a diagonal match going down from right to left in upper right corner" do
+      game_board = Board.new
+      disc_base = Disc.new("X")
+      
+      disc1 = Disc.new("O")
+      disc2 = Disc.new("O")
+      disc3 = Disc.new("O")
+      disc4 = Disc.new("O")
+      
+      game_board.insert_disc(disc_base, 3)
+      game_board.insert_disc(disc_base, 3)
+      game_board.insert_disc(disc_base, 4)
+      game_board.insert_disc(disc_base, 4)
+      game_board.insert_disc(disc_base, 5)
+      game_board.insert_disc(disc_base, 5)
+      game_board.insert_disc(disc_base, 6)
+      game_board.insert_disc(disc_base, 6)
+      
+      game_board.insert_disc(disc_base, 3)
+      game_board.insert_disc(disc_base, 4)
+      game_board.insert_disc(disc_base, 5)
+      game_board.insert_disc(disc1, 6)
+
+      game_board.insert_disc(disc_base, 3)
+      game_board.insert_disc(disc_base, 4)
+      game_board.insert_disc(disc2, 5)
+
+      game_board.insert_disc(disc_base, 3)
+      game_board.insert_disc(disc3, 4)
+
+      game_board.insert_disc(disc4, 3)
+      
+      expect(game_board.diagonal_down_match?(disc2)).to eql(true)
+    end
+
+    it "returns false if there is another color breaking a diagonal match" do
+      game_board = Board.new
+      
+      disc_base = Disc.new("X")
+      
+      disc1 = Disc.new("O")
+      disc2 = Disc.new("X")
+      disc3 = Disc.new("O")
+      disc4 = Disc.new("O")
+      
+      game_board.insert_disc(disc_base, 3)
+      game_board.insert_disc(disc_base, 4)
+      game_board.insert_disc(disc_base, 5)
+      game_board.insert_disc(disc1, 6)
+
+      game_board.insert_disc(disc_base, 3)
+      game_board.insert_disc(disc_base, 4)
+      game_board.insert_disc(disc2, 5)
+
+      game_board.insert_disc(disc_base, 3)
+      game_board.insert_disc(disc3, 4)
+
+      game_board.insert_disc(disc4, 3)
+      
+      expect(game_board.diagonal_down_match?(disc1)).to eql(false)
+    end
+
+    it "returns false if there is a hole in a diagonal streak" do
+      game_board = Board.new
+      
+      disc_base = Disc.new("X")
+      
+      disc1 = Disc.new("O")
+      disc2 = Disc.new("O") 
+      disc3 = Disc.new("O")
+      disc4 = Disc.new("O")
+      
+      game_board.insert_disc(disc_base, 3)
+      game_board.insert_disc(disc_base, 4)
+      game_board.insert_disc(disc_base, 5)
+      game_board.insert_disc(disc1, 6)
+
+      game_board.insert_disc(disc_base, 3)
+      game_board.insert_disc(disc_base, 4)
+
+      game_board.insert_disc(disc_base, 3)
+      game_board.insert_disc(disc3, 4)
+
+      game_board.insert_disc(disc4, 3)
+
+      expect(game_board.diagonal_down_match?(disc1)).to eql(false)
+    end
+  end
 end

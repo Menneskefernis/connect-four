@@ -1,10 +1,11 @@
 require './lib/game'
 
 describe Game do
-  game = Game.new
+  let(:game) { Game.new }
+  
   describe "#initialize" do
     it "sets a color for player 1" do
-      expect(game.player1.color).to eql("\e[0;31;49mX\e[0m")
+      expect(game.player1.color).to eql("\e[0;31;49m⚫\e[0m")
     end
   end
 
@@ -24,12 +25,10 @@ describe Game do
     end
   end
 
-  let(:new_game) {Game.new}
-
-  context 'validate that the user input is one of the given choices' do
-    it 'accepts and returns an integer from 1 - 7' do
-      new_game.stub(:gets) { "1" }
-      expect(new_game.get_input).to eq(1)
+  describe "validate that the user input is one of the given choices" do
+    it "accepts and returns an integer from 1 - 7" do
+      game.stub(:gets) { "1" }
+      expect(game.get_input).to eq(1)
     end
   end
 end

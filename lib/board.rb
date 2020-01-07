@@ -1,25 +1,6 @@
 require_relative 'empty_slot'
 
 class Board
-  attr_accessor :state
-
-  def initialize
-    @state = create_board
-  end
-
-  def create_board
-    board = Array.new(7) { Array.new(6) }
-    add_empty_slots(board)
-  end
-  
-  def add_empty_slots(array)
-    array.map.each_with_index do |column, i|
-      column.map.each_with_index do |row, j|
-        row = EmptySlot.new(i, j)
-      end
-    end
-  end
-
   def insert_disc(disc, column)
     row = 0
     
@@ -55,6 +36,38 @@ class Board
     return true if diagonal_down_match?(disc)
     return true if diagonal_up_match?(disc)
     false
+  end
+
+  def column_full?(column)
+    return true if state[column].all? { |spot| spot.is_a? Disc }
+    false
+  end
+
+  def full?
+    state.each do |column|
+      return false if column.any? { |slot| slot.is_a? EmptySlot }
+    end
+    true
+  end
+
+  private
+  attr_accessor :state
+
+  def initialize
+    @state = create_board
+  end
+
+  def create_board
+    board = Array.new(7) { Array.new(6) }
+    add_empty_slots(board)
+  end
+  
+  def add_empty_slots(array)
+    array.map.each_with_index do |column, i|
+      column.map.each_with_index do |row, j|
+        row = EmptySlot.new(i, j)
+      end
+    end
   end
 
   def diagonal_down_match?(disc)
@@ -130,40 +143,4 @@ class Board
     end
     false
   end
-
-  def column_full?(column)
-    return true if state[column].all? { |spot| spot.is_a? Disc }
-    false
-  end
-
-  def board_full?
-
-  end
 end
-
-
-
-#current = nil
-#if disc.column - disc.row < 0
-#  current = state[0][(disc.column - disc.row).abs]
-#else
-#  current = state[disc.column - disc.row][0]
-#end
-##Add tile classes with columns and rows
-#counter = 0
-#row = 0
-#column = current.column
-#
-#until row >= state[0].size
-#  if current.is_a? Disc
-#    current.color == disc.color ? counter += 1 : counter = 0
-#  else
-#    counter = 0
-#  end
-#  break if state[column + 1].nil?
-#  current = state[column + 1][row + 1] if state[column + 1][row + 1]
-#  row += 1
-#  column += 1
-#end
-#return true if counter >= 4
-#false

@@ -1,7 +1,8 @@
 class Disc
-  attr_accessor :color #should be changed to reader
   attr_accessor :column, :row
+  attr_reader :color
 
+  private
   def initialize(color)
     @color = color
     @column = nil

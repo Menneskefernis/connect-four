@@ -4,7 +4,13 @@ require_relative 'board'
 require_relative 'disc'
 
 class Game
-  attr_accessor :player1, :player2, :board #should be made reader
+  def start
+    intro
+    play_round until game_end
+  end
+
+  private
+  attr_reader :player1, :player2, :board
   attr_accessor :current_player, :game_end
   
   def initialize
@@ -24,19 +30,14 @@ class Game
     puts ""
   end
 
-  def start
-    intro
-    play_round until game_end
-  end
-
   def play_round
     board.draw
     choice = get_input
     
     new_disc = Disc.new(current_player.color)
     board.insert_disc(new_disc, choice - 1)
-    end_game if board.four_in_row?(new_disc)
-    
+    end_game if board.four_in_row?(new_disc) || board.full?
+
     switch_player
   end
 
@@ -67,41 +68,16 @@ class Game
 
   def end_game
     board.draw
-    player = current_player == player1 ? "Red" : "Green"
-    puts "#{player}".upcase + " #{current_player}" + "won the game!\n\n".upcase
+
+    if board.full?
+      puts "The game ended in a tie. Congratulations, you are equally bad!\n\n"
+    else
+      player = current_player == player1 ? "Red" : "Green"
+      puts "#{player}".upcase + " #{current_player}" + "won the game!\n\n".upcase
+    end
     self.game_end = true
   end
 end
-
-
-
-#game_board = Board.new
-#game_board.state[6].each { |elem| puts elem }
-
-#disc1_0 = Disc.new("O")
-#disc2_0 = Disc.new("X") 
-#disc1_1 = Disc.new("O")
-#disc2_1 = Disc.new("X")
-#disc3_0 = Disc.new("X")
-#disc1_2 = Disc.new("O")
-#disc4_0 = Disc.new("X")
-#disc3_1 = Disc.new("X")
-#disc2_2 = Disc.new("X")
-#disc1_3 = Disc.new("O")
-#
-##game_board.insert_disc(disc1_0, 3)
-#game_board.insert_disc(disc2_0, 1)
-#game_board.insert_disc(disc1_1, 1)
-#game_board.insert_disc(disc2_1, 1)
-#game_board.insert_disc(disc3_0, 1)
-#game_board.insert_disc(disc1_2, 1)
-#game_board.insert_disc(disc4_0, 1)
-#game_board.insert_disc(disc3_1, 6)
-#game_board.insert_disc(disc2_2, 6)
-#game_board.insert_disc(disc1_3, 6)
-#
-#puts game_board.diagonal_down_match?(disc3_1)
-#game_board.draw
 
 game = Game.new
 game.start
