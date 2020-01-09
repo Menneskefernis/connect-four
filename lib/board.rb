@@ -54,20 +54,11 @@ class Board
   attr_accessor :state
 
   def initialize
-    @state = create_board
+    @state = create_board(6, 7)
   end
 
-  def create_board
-    board = Array.new(7) { Array.new(6) }
-    add_empty_slots(board)
-  end
-  
-  def add_empty_slots(array)
-    array.map.each_with_index do |column, i|
-      column.map.each_with_index do |row, j|
-        row = EmptySlot.new(i, j)
-      end
-    end
+  def create_board(columns, rows)
+    Array.new(rows) { |x| Array.new(columns) { |y| EmptySlot.new(x, y) } }
   end
 
   def diagonal_down_match?(disc)

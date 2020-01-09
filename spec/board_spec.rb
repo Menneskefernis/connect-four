@@ -3,7 +3,7 @@ require './lib/board'
 describe Board do  
   describe "#create_board" do
     game_board = Board.new
-    game_board.create_board
+    game_board.create_board(6, 7)
 
     it "sets up the board with nested 7 arrays" do
       expect(game_board.state.size).to eql(7)
@@ -14,9 +14,21 @@ describe Board do
     end
   end
 
+  #describe "#create_board" do
+  #  it "creates a multidimensional array of EmptySlots" do
+  #    game_board = Board.new
+  #    
+  #    expect(EmptySlot).to receive(:new).with(0,0)
+  #    expect(EmptySlot).to receive(:new).with(0,1)
+  #    expect(EmptySlot).to receive(:new).with(1,0)
+  #    expect(EmptySlot).to receive(:new).with(1,1)
+  #    expect(game_board.create_board(2, 2)).to all( be_an(EmptySlot) )
+  #  end
+  #end
+
   describe "#insert_disc" do
     game_board = Board.new
-    game_board.create_board
+    game_board.create_board(6, 7)
 
     it "adds a disc to a column on the board" do
       disc = Disc.new("X")
@@ -33,7 +45,7 @@ describe Board do
 
   describe "#column_full?" do
     game_board = Board.new
-    game_board.create_board
+    game_board.create_board(6, 7)
 
     it "returns false if a column is not full" do
       expect(game_board.column_full?(4)).to eql(false)

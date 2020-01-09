@@ -70,7 +70,7 @@ class Game
     board.draw
 
     if board.full?
-      puts "The game ended in a tie. Congratulations, you are equally bad!\n\n"
+      puts "The game ended in a tie. Congratulations, you are both equally bad!\n\n"
     else
       player = current_player == player1 ? "Red" : "Green"
       puts "#{player}".upcase + " #{current_player}" + "won the game!\n\n".upcase
